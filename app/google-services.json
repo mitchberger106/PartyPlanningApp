@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "25851328028",
+    "firebase_url": "https://partyplanningapp.firebaseio.com",
+    "project_id": "partyplanningapp",
+    "storage_bucket": "partyplanningapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:25851328028:android:ef053848ea90438f",
+        "android_client_info": {
+          "package_name": "berger.mitchell.partyplanningapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "25851328028-0db9fnt0tffrtbq2qd2d85552jpdbp7q.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "25851328028-0db9fnt0tffrtbq2qd2d85552jpdbp7q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDb4npLsJCCwEqUev0qtwVopqeqMZE1CpM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
