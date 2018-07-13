@@ -81,8 +81,8 @@ public class NewGuestActivity extends AppCompatActivity {
         btnEnter.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                submitForm();
-                if (inputLayoutNumber.isErrorEnabled() == false && inputLayoutName.isErrorEnabled() == false)
+                validateName();
+                if (inputLayoutName.isErrorEnabled() == false)
                 {
 
                     checkAndroidVersion();
@@ -141,41 +141,18 @@ public class NewGuestActivity extends AppCompatActivity {
     /**
      * Validating form
      */
-    private void submitForm() {
-        if (!validateName()) {
-            return;
-        }
-
-        if (!validateNumber()) {
-            return;
-        }
-
-    }
 
     private boolean validateName() {
-        /*if (inputName.getText().toString().trim().isEmpty()) {
+        if (inputName.getText().toString().trim().isEmpty()) {
             inputLayoutName.setError(getString(R.string.err_msg_name));
-            requestFocus(inputName);
+            inputLayoutName.setErrorEnabled(true);
             return false;
-        } else {
+        }
+
+        else {
             inputLayoutName.setErrorEnabled(false);
-        }*/
-
-        return true;
-    }
-
-    private boolean validateNumber() {
-        String number = inputNumber.getText().toString().trim();
-
-        /*if (number.length() != 10) {
-            inputLayoutNumber.setError(getString(R.string.err_msg_number));
-            requestFocus(inputNumber);
-            return false;
-        } else {
-            inputLayoutNumber.setErrorEnabled(false);
-        }*/
-
-        return true;
+            return true;
+        }
     }
 
     private void requestFocus(View view) {
@@ -202,9 +179,6 @@ public class NewGuestActivity extends AppCompatActivity {
             switch (view.getId()) {
                 case R.id.input_name:
                     validateName();
-                    break;
-                case R.id.input_number:
-                    validateNumber();
                     break;
             }
         }

@@ -45,7 +45,6 @@ public class ScanFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_scan, container, false);
         rootView.setTag(TAG);
         name = SharedPref.read(SharedPref.Party, "");
-        Log.d("ScanFragment", name);
         scanButton = rootView.findViewById(R.id.scnButton);
         scanButton.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -66,28 +65,32 @@ public class ScanFragment extends Fragment {
         final IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (result != null) {
             if (result.getContents() == null) {
-                Log.d("MainActivity", "Cancelled scan");
                 Toast.makeText(getActivity(), "Cancelled", Toast.LENGTH_LONG).show();
             } else {
                 Log.d("MainActivity", "Scanned");
                 GuestName = result.getContents();
                 FirebaseDatabase database = FirebaseDatabase.getInstance();
                 DatabaseReference ref = database.getReference("Parties").child(name).child("Guests");
-                ref.addValueEventListener(new ValueEventListener() {
+                ref.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        Log.d("ScanFragment", "value: " + dataSnapshot.getChildrenCount());
                         if(!dataSnapshot.hasChild(GuestName)) {
                             if(result != null) {
                                 Toast.makeText(getActivity(), result.getContents() + " not invited", Toast.LENGTH_LONG).show();
                             }
                         }
                         else {
-                            FirebaseDatabase database = FirebaseDatabase.getInstance();
-                            final int[] value = new int[1];
-                            DatabaseReference myRef = database.getReference("Parties").child(name).child("Guests").child(GuestName).child("Status");
-                            myRef.setValue("Attended");
-                            Toast.makeText(getActivity(), "Welcome: " + result.getContents(), Toast.LENGTH_LONG).show();
+                            Log.d("ScanFragment", "Value: " + dataSnapshot.child(GuestName).child("Status").getValue());
+                            if(dataSnapshot.child(GuestName).child("Status").getValue().toString().equals("Attended")){
+                                Toast.makeText(getActivity(), result.getContents() + " is already here!", Toast.LENGTH_LONG).show();
+                            }
+                            else {
+                                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                                final int[] value = new int[1];
+                                DatabaseReference myRef = database.getReference("Parties").child(name).child("Guests").child(GuestName).child("Status");
+                                myRef.setValue("Attended");
+                                Toast.makeText(getActivity(), "Welcome: " + result.getContents(), Toast.LENGTH_LONG).show();
+                            }
                         }
                     }
 

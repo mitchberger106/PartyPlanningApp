@@ -1,12 +1,16 @@
 package berger.mitchell.partyplanningapp.Adapters;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -20,6 +24,8 @@ import berger.mitchell.partyplanningapp.Sources.GuestListSource;
 public class GuestListAdapter extends RecyclerView.Adapter<GuestListAdapter.MyViewHolder>{
     private List<GuestListSource> GuestList;
     private Context mContext;
+    public String PartyName;
+    public String guestListName;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView guestName;
@@ -50,27 +56,43 @@ public class GuestListAdapter extends RecyclerView.Adapter<GuestListAdapter.MyVi
     @Override
     public void onBindViewHolder(GuestListAdapter.MyViewHolder holder, int position) {
         final GuestListSource availableGuest = GuestList.get(position);
-        final String PartyName = SharedPref.read(SharedPref.Party,"");
+        PartyName = SharedPref.read(SharedPref.Party,"");
         holder.guestName.setText(availableGuest.getName());
         holder.guestStatus.setText(availableGuest.getStatus());
         holder.guestNumber.setText(availableGuest.getNumber());
-/*        holder.mGuestListRow.setOnClickListener(new View.OnClickListener() {
+        holder.mGuestListRow.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
-            public void onClick(View v) {
-                FirebaseDatabase database = FirebaseDatabase.getInstance();
-                final DatabaseReference myRef = database.getReference("Parties");
-                final DatabaseReference myRef0 = myRef.child(PartyName);
-                final DatabaseReference myRef2 = myRef0.child("Guests");
-                final DatabaseReference myRef3 = myRef2.child(availableGuest.getName());
-                final DatabaseReference myRef5 = myRef3.child("Status");
-                if(availableGuest.getStatus().equals("Invited")){
-                    myRef5.setValue("Attended");}
-                else{
-                    myRef5.setValue("Invited");
-                }
+            public boolean onLongClick(View view) {
+                guestListName = availableGuest.getName();
+                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                builder.setMessage("Are you sure you want to delete " + availableGuest.getName() + "?").setPositiveButton("Yes", dialogClickListener)
+                        .setNegativeButton("No", dialogClickListener).show();
+                return false;
             }
-        });*/
+        });
     }
+
+
+    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            switch (which){
+                case DialogInterface.BUTTON_POSITIVE:
+                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+                    final DatabaseReference myRef = database.getReference("Parties");
+                    final DatabaseReference myRef0 = myRef.child(PartyName);
+                    final DatabaseReference myRef2 = myRef0.child("Guests");
+                    final DatabaseReference myRef3 = myRef2.child(guestListName);
+                    Toast.makeText(mContext, "Removing "+guestListName, Toast.LENGTH_LONG).show();
+                    myRef3.removeValue();
+                    break;
+
+                case DialogInterface.BUTTON_NEGATIVE:
+                    //No button clicked
+                    break;
+            }
+        }
+    };
 
     //Get size of list
     @Override
