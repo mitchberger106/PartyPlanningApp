@@ -2,7 +2,9 @@ package berger.mitchell.partyplanningapp.Fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -22,6 +25,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import berger.mitchell.partyplanningapp.Activities.NewGuestActivity;
 import berger.mitchell.partyplanningapp.Adapters.GuestListAdapter;
 import berger.mitchell.partyplanningapp.R;
 import berger.mitchell.partyplanningapp.SharedPref;
@@ -35,6 +39,7 @@ public class GuestListFragment extends Fragment {
     private static final String TAG = "GuestListFragment";
     private Context mContext;
     private Toolbar toolbar;
+    private FloatingActionButton fab;
 
     public GuestListFragment() {
 
@@ -56,7 +61,7 @@ public class GuestListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_guest_list, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_guest_list, container, false);
         rootView.setTag(TAG);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.my_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -73,6 +78,33 @@ public class GuestListFragment extends Fragment {
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Guest List");*/
 
         prepareGuestData();
+
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener(){
+            final FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy){
+                if (dy > 0 ||dy<0 && fab.isShown())
+                    fab.hide();
+            }
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+
+                if (newState == RecyclerView.SCROLL_STATE_IDLE){
+                    fab.show();
+                }
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+        });
+
+        fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), NewGuestActivity.class);
+                startActivity(intent);
+            }
+        });
 
         return rootView;
 

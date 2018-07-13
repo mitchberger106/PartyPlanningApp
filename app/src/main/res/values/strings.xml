@@ -11,6 +11,8 @@
     <string name="nav_guestlist">Guests</string>
     <string name="nav_profile">Profile</string>
 
+    <string name="file_provider_authority" translatable="false">com.quiro.fileproviderexample.fileprovider</string>
+
     <string name="hint_name">Party Name</string>
     <string name="hint_date">Party Date</string>
     <string name="hint_time">Party Time</string>
