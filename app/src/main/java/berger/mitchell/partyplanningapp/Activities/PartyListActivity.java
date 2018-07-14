@@ -42,18 +42,8 @@ public class PartyListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.app_bar_main);
 
-        /*if(getIntent().hasExtra("Name")){
-            Bundle bundle = getIntent().getExtras();
-            String name = bundle.getString("Name");
-            String date = bundle.getString("Date");
-            RecyclerSource newParty = new RecyclerSource(name,date,"0");
-            RecyclerList.add(newParty);
-        }*/
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Available Parties");
-        //setSupportActionBar(toolbar);
-        //getSupportActionBar().setTitle("Available Parties");
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -72,18 +62,10 @@ public class PartyListActivity extends AppCompatActivity {
             }
         });
 
-
-        //NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        //navigationView.setNavigationItemSelectedListener(this);
-
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        //mRecyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
-
-        //RecyclerSource party = new RecyclerSource(partyName,partyDate,numGuests);
-        //RecyclerList.add(party);
 
         mAdapter = new UpcomingPartyAdapter(RecyclerList, this);
         mRecyclerView.setAdapter(mAdapter);
@@ -126,7 +108,6 @@ public class PartyListActivity extends AppCompatActivity {
                     String location = Snapshot.child("Location").getValue(String.class);
                     String time = Snapshot.child("Time").getValue(String.class);
                     String attended = Snapshot.child("Attended").getValue(String.class);
-                    Log.d("hi", "Value is: " + name);
                     UpcomingPartySource party = new UpcomingPartySource(name, date, numGuests, location, time, attended);
                     RecyclerList.add(party);
                 }
@@ -152,7 +133,7 @@ public class PartyListActivity extends AppCompatActivity {
             @Override
             public void onCancelled(DatabaseError error) {
                 // Failed to read value
-                Log.w("here", "Failed to read value.", error.toException());
+                Log.w("PartyListActivity", "Failed to read value.", error.toException());
             }
         });
         mSwipeRefreshLayout.setRefreshing(false);

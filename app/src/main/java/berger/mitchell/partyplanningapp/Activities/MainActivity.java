@@ -19,7 +19,7 @@ import berger.mitchell.partyplanningapp.Fragments.ProfileFragment;
 import berger.mitchell.partyplanningapp.Fragments.ScanFragment;
 import berger.mitchell.partyplanningapp.R;
 
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class MainActivity extends AppCompatActivity {
     private Fragment homeFragment;
     private Fragment guestListFragment;
     private Fragment scanFragment;
@@ -42,7 +42,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     getSupportActionBar().setTitle("Party info");
                     break;
                 case R.id.navigation_guestlist:
-                    Log.d("here", "here");
                     transaction.replace(R.id.fragment_container, new GuestListFragment());
                     getSupportActionBar().setTitle("Guest List");
                     break;
@@ -88,10 +87,5 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onResume(){
         super.onResume();
         isRunning = true;
-    }
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-
     }
 }

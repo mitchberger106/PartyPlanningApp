@@ -65,7 +65,7 @@ public class GuestListAdapter extends RecyclerView.Adapter<GuestListAdapter.MyVi
             public boolean onLongClick(View view) {
                 guestListName = availableGuest.getName();
                 AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-                builder.setMessage("Are you sure you want to delete " + availableGuest.getName() + "?").setPositiveButton("Yes", dialogClickListener)
+                builder.setMessage("Are you sure you want to remove " + availableGuest.getName() + "?").setPositiveButton("Yes", dialogClickListener)
                         .setNegativeButton("No", dialogClickListener).show();
                 return false;
             }

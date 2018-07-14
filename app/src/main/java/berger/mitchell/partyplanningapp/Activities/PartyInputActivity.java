@@ -58,7 +58,7 @@ public class PartyInputActivity extends AppCompatActivity implements
     private static final int GOOGLE_API_CLIENT_ID = 0;
     private GoogleApiClient mGoogleApiClient;
     private LocationAdapter mPlaceArrayAdapter;
-    private static final LatLngBounds BOUNDS_MOUNTAIN_VIEW = new LatLngBounds(
+    private static final LatLngBounds BOUNDS_NC = new LatLngBounds(
             new LatLng(34, -82), new LatLng(37, -74));
 
 
@@ -91,7 +91,7 @@ public class PartyInputActivity extends AppCompatActivity implements
                 .addConnectionCallbacks((GoogleApiClient.ConnectionCallbacks) this)
                 .build();
         mPlaceArrayAdapter = new LocationAdapter(this, android.R.layout.simple_list_item_1,
-                BOUNDS_MOUNTAIN_VIEW, null);
+                BOUNDS_NC, null);
 
         inputLocation.setOnItemClickListener(mAutocompleteClickListener);
         inputLocation.setAdapter(mPlaceArrayAdapter);
@@ -106,7 +106,6 @@ public class PartyInputActivity extends AppCompatActivity implements
         final TimePickerDialog.OnTimeSetListener time = new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker view, int hour, int minute) {
-                // TODO Auto-generated method stub
                 myTime.set(Calendar.HOUR_OF_DAY, hour);
                 myTime.set(Calendar.MINUTE, minute);
                 updateTimeLabel();
@@ -118,7 +117,6 @@ public class PartyInputActivity extends AppCompatActivity implements
 
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
                 new TimePickerDialog(PartyInputActivity.this, time, myTime
                         .get(Calendar.HOUR_OF_DAY), myTime.get(Calendar.MINUTE), false).show();
             }
@@ -128,7 +126,6 @@ public class PartyInputActivity extends AppCompatActivity implements
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear,
                                   int dayOfMonth) {
-                // TODO Auto-generated method stub
                 myCalendar.set(Calendar.YEAR, year);
                 myCalendar.set(Calendar.MONTH, monthOfYear);
                 myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);

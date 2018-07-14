@@ -74,7 +74,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback  {
             Log.d("setUpMap", "Map not null");
             map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
             LatLng partyLoc = getLatLngfromAddress(address, this.getContext());
-            map.addMarker(new MarkerOptions().position(partyLoc).title("Party Location"));
+            map.addMarker(new MarkerOptions().position(partyLoc).title(address));
             CameraPosition cameraPosition = new CameraPosition.Builder().target(partyLoc).zoom(18.0f).build();
             CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition);
             map.moveCamera(cameraUpdate);
