@@ -112,20 +112,6 @@ public class PartyListActivity extends AppCompatActivity {
                     RecyclerList.add(party);
                 }
 
-                class StringDateComparator implements Comparator<UpcomingPartySource>
-                {
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy");
-                    public int compare(UpcomingPartySource rhs, UpcomingPartySource lhs)
-                    {
-                        try {
-                            return dateFormat.parse(lhs.getDate()).compareTo(dateFormat.parse(rhs.getDate()));
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-                        return 0;
-                    }
-                }
-
                 Collections.sort(RecyclerList, new StringDateComparator());
                 mAdapter.notifyDataSetChanged();
             }
@@ -137,5 +123,18 @@ public class PartyListActivity extends AppCompatActivity {
             }
         });
         mSwipeRefreshLayout.setRefreshing(false);
+    }
+    class StringDateComparator implements Comparator<UpcomingPartySource>
+    {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy");
+        public int compare(UpcomingPartySource rhs, UpcomingPartySource lhs)
+        {
+            try {
+                return dateFormat.parse(lhs.getDate()).compareTo(dateFormat.parse(rhs.getDate()));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            return 0;
+        }
     }
 }

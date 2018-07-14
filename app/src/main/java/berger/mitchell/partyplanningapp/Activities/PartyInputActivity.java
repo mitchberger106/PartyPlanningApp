@@ -170,7 +170,7 @@ public class PartyInputActivity extends AppCompatActivity implements
                     myRef4.setValue(inputTime.getText().toString());
                     myRef5.setValue("0");
                     myRef6.setValue("0");
-                    Intent intent = new Intent(PartyInputActivity.this, MainActivity.class);
+                    Intent intent = new Intent(PartyInputActivity.this, PartyListActivity.class);
                     //b.putString("Name", inputName.getText().toString());
                     //b.putString("Date", inputDate.getText().toString());
                     //intent.putExtras(b);
