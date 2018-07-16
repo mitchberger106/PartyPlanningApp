@@ -33,8 +33,11 @@ import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -152,24 +155,8 @@ public class PartyInputActivity extends AppCompatActivity implements
                 submitForm();
                 if (inputLayoutTime.isErrorEnabled() == false &&
                         inputLayoutDate.isErrorEnabled() == false && inputLayoutName.isErrorEnabled() == false) {
-                    FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    String name = inputName.getText().toString();
-                    String date = inputDate.getText().toString();
-                    final DatabaseReference myRef = database.getReference("Parties");
-                    final DatabaseReference myRef0 = myRef.child(name);
-                    final DatabaseReference myRef1 = myRef0.child("Name");
-                    final DatabaseReference myRef2 = myRef0.child("Date");
-                    final DatabaseReference myRef3 = myRef0.child("Location");
-                    final DatabaseReference myRef4 = myRef0.child("Time");
-                    final DatabaseReference myRef5 = myRef0.child("numGuests");
-                    final DatabaseReference myRef6 = myRef0.child("Attended");
-                    Log.d("name", name);
-                    myRef1.setValue(name);
-                    myRef2.setValue(date);
-                    myRef3.setValue(inputLocation.getText().toString());
-                    myRef4.setValue(inputTime.getText().toString());
-                    myRef5.setValue("0");
-                    myRef6.setValue("0");
+                    setVals();
+                    if(!checkVals()) setVals();
                     Intent intent = new Intent(PartyInputActivity.this, PartyListActivity.class);
                     //b.putString("Name", inputName.getText().toString());
                     //b.putString("Date", inputDate.getText().toString());
@@ -180,6 +167,46 @@ public class PartyInputActivity extends AppCompatActivity implements
         });
     }
 
+    private boolean checkVals(){
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final DatabaseReference myRef = database.getReference("Parties").child(inputName.getText().toString());
+        final boolean[] ans = {true};
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(!dataSnapshot.hasChild("Name") || !dataSnapshot.hasChild("Date") || !dataSnapshot.hasChild("Location") ||
+                        !dataSnapshot.hasChild("Time") || !dataSnapshot.hasChild("numGuests") || !dataSnapshot.hasChild("Attended")){
+                    ans[0] = false;
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+                return ans[0];
+    }
+    private void setVals(){
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        String name = inputName.getText().toString();
+        String date = inputDate.getText().toString();
+        final DatabaseReference myRef = database.getReference("Parties");
+        final DatabaseReference myRef0 = myRef.child(name);
+        final DatabaseReference myRef1 = myRef0.child("Name");
+        final DatabaseReference myRef2 = myRef0.child("Date");
+        final DatabaseReference myRef3 = myRef0.child("Location");
+        final DatabaseReference myRef4 = myRef0.child("Time");
+        final DatabaseReference myRef5 = myRef0.child("numGuests");
+        final DatabaseReference myRef6 = myRef0.child("Attended");
+        Log.d("name", name);
+        myRef1.setValue(name);
+        myRef2.setValue(date);
+        myRef3.setValue(inputLocation.getText().toString());
+        myRef4.setValue(inputTime.getText().toString());
+        myRef5.setValue("0");
+        myRef6.setValue("0");
+    }
     private AdapterView.OnItemClickListener mAutocompleteClickListener
             = new AdapterView.OnItemClickListener() {
         @Override

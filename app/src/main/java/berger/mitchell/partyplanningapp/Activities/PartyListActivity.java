@@ -1,6 +1,7 @@
 package berger.mitchell.partyplanningapp.Activities;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -112,7 +113,7 @@ public class PartyListActivity extends AppCompatActivity {
                     RecyclerList.add(party);
                 }
 
-                Collections.sort(RecyclerList, new StringDateComparator());
+                new MyAsyncTask().execute();
                 mAdapter.notifyDataSetChanged();
             }
 
@@ -135,6 +136,15 @@ public class PartyListActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
             return 0;
+        }
+    }
+
+    private class MyAsyncTask extends AsyncTask<Void, Void, Void>
+    {
+        @Override
+        protected Void doInBackground(Void... params) {
+            Collections.sort(RecyclerList, new StringDateComparator());
+            return null;
         }
     }
 }
