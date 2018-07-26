@@ -33,6 +33,7 @@ import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -199,6 +200,7 @@ public class PartyInputActivity extends AppCompatActivity implements
         final DatabaseReference myRef4 = myRef0.child("Time");
         final DatabaseReference myRef5 = myRef0.child("numGuests");
         final DatabaseReference myRef6 = myRef0.child("Attended");
+        final DatabaseReference myRef7 = myRef0.child("Hosts");
         Log.d("name", name);
         myRef1.setValue(name);
         myRef2.setValue(date);
@@ -206,6 +208,7 @@ public class PartyInputActivity extends AppCompatActivity implements
         myRef4.setValue(inputTime.getText().toString());
         myRef5.setValue("0");
         myRef6.setValue("0");
+        myRef7.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue("True");
     }
     private AdapterView.OnItemClickListener mAutocompleteClickListener
             = new AdapterView.OnItemClickListener() {

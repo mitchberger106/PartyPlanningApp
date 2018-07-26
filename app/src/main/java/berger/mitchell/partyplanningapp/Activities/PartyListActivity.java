@@ -1,8 +1,11 @@
 package berger.mitchell.partyplanningapp.Activities;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -11,8 +14,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -37,6 +45,43 @@ public class PartyListActivity extends AppCompatActivity {
     private UpcomingPartyAdapter mAdapter;
     private List<UpcomingPartySource> RecyclerList = new ArrayList<>();
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private FirebaseAuth auth;
+    private FirebaseAuth.AuthStateListener authListener;
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_sign_out) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("Are you sure you wish to sign out?").setPositiveButton("Yes", dialogClickListener)
+                    .setNegativeButton("No", dialogClickListener).show();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            switch (which){
+                case DialogInterface.BUTTON_POSITIVE:
+                    auth.signOut();
+                    break;
+
+                case DialogInterface.BUTTON_NEGATIVE:
+                    //No button clicked
+                    break;
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +89,22 @@ public class PartyListActivity extends AppCompatActivity {
         setContentView(R.layout.app_bar_main);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         toolbar.setTitle("Available Parties");
+
+        auth = FirebaseAuth.getInstance();
+        authListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user == null) {
+                    // user auth state is changed - user is null
+                    // launch login activity
+                    startActivity(new Intent(PartyListActivity.this, LoginActivity.class));
+                    finish();
+                }
+            }
+        };
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -95,6 +155,7 @@ public class PartyListActivity extends AppCompatActivity {
     public void loadSessions() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("Parties");
+        final String userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -103,14 +164,16 @@ public class PartyListActivity extends AppCompatActivity {
                 // whenever data at this location is updated.
                 RecyclerList.clear();
                 for (DataSnapshot Snapshot : dataSnapshot.getChildren()) {
-                    String name = Snapshot.child("Name").getValue(String.class);
-                    String date = Snapshot.child("Date").getValue(String.class);
-                    String numGuests = Snapshot.child("numGuests").getValue(String.class);
-                    String location = Snapshot.child("Location").getValue(String.class);
-                    String time = Snapshot.child("Time").getValue(String.class);
-                    String attended = Snapshot.child("Attended").getValue(String.class);
-                    UpcomingPartySource party = new UpcomingPartySource(name, date, numGuests, location, time, attended);
-                    RecyclerList.add(party);
+                    if(Snapshot.child("Hosts").hasChild(userUid)) {
+                        String name = Snapshot.child("Name").getValue(String.class);
+                        String date = Snapshot.child("Date").getValue(String.class);
+                        String numGuests = Snapshot.child("numGuests").getValue(String.class);
+                        String location = Snapshot.child("Location").getValue(String.class);
+                        String time = Snapshot.child("Time").getValue(String.class);
+                        String attended = Snapshot.child("Attended").getValue(String.class);
+                        UpcomingPartySource party = new UpcomingPartySource(name, date, numGuests, location, time, attended);
+                        RecyclerList.add(party);
+                    }
                 }
 
                 new MyAsyncTask().execute();
@@ -125,6 +188,9 @@ public class PartyListActivity extends AppCompatActivity {
         });
         mSwipeRefreshLayout.setRefreshing(false);
     }
+
+
+
     class StringDateComparator implements Comparator<UpcomingPartySource>
     {
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy");
@@ -145,6 +211,20 @@ public class PartyListActivity extends AppCompatActivity {
         protected Void doInBackground(Void... params) {
             Collections.sort(RecyclerList, new StringDateComparator());
             return null;
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        auth.addAuthStateListener(authListener);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (authListener != null) {
+            auth.removeAuthStateListener(authListener);
         }
     }
 }

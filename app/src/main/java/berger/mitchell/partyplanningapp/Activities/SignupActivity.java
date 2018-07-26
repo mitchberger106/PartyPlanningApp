@@ -15,11 +15,13 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import berger.mitchell.partyplanningapp.R;
 
 public class SignupActivity extends AppCompatActivity {
-    private EditText inputEmail, inputPassword;
+    private EditText inputEmail, inputPassword, inputFirstName, inputLastName;
     private Button btnSignIn, btnSignUp, btnResetPassword;
     private ProgressBar progressBar;
     private FirebaseAuth auth;
@@ -38,6 +40,8 @@ public class SignupActivity extends AppCompatActivity {
         inputPassword = (EditText) findViewById(R.id.password);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         btnResetPassword = (Button) findViewById(R.id.btn_reset_password);
+        inputFirstName = findViewById(R.id.firstName);
+        inputLastName = findViewById(R.id.lastName);
 
         btnResetPassword.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,6 +63,18 @@ public class SignupActivity extends AppCompatActivity {
 
                 String email = inputEmail.getText().toString().trim();
                 String password = inputPassword.getText().toString().trim();
+                final String firstname = inputFirstName.getText().toString().trim();
+                final String lastname = inputLastName.getText().toString().trim();
+
+                if (TextUtils.isEmpty(firstname)) {
+                    Toast.makeText(getApplicationContext(), "Enter first name!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (TextUtils.isEmpty(lastname)) {
+                    Toast.makeText(getApplicationContext(), "Enter last name!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
                 if (TextUtils.isEmpty(email)) {
                     Toast.makeText(getApplicationContext(), "Enter email address!", Toast.LENGTH_SHORT).show();
@@ -90,7 +106,12 @@ public class SignupActivity extends AppCompatActivity {
                                     Toast.makeText(SignupActivity.this, "Authentication failed." + task.getException(),
                                             Toast.LENGTH_SHORT).show();
                                 } else {
-                                    startActivity(new Intent(SignupActivity.this, MainActivity.class));
+                                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+                                    final DatabaseReference myRef = database.getReference("Users");
+                                    DatabaseReference myRef1 = myRef.child(firstname + " " + lastname);
+                                    myRef1.child("Email").setValue(auth.getCurrentUser().getEmail());
+                                    myRef1.child("Uid").setValue(auth.getCurrentUser().getUid());
+                                    startActivity(new Intent(SignupActivity.this, PartyListActivity.class));
                                     finish();
                                 }
                             }
