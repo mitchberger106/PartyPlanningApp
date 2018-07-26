@@ -19,6 +19,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import berger.mitchell.partyplanningapp.Activities.AddHostActivity;
 import berger.mitchell.partyplanningapp.Activities.LoginActivity;
 import berger.mitchell.partyplanningapp.Activities.SignupActivity;
 import berger.mitchell.partyplanningapp.R;
@@ -31,7 +32,7 @@ import static android.support.constraint.Constraints.TAG;
 public class ProfileFragment extends Fragment {
 
     private Button btnChangeEmail, btnChangePassword, btnSendResetEmail, btnRemoveUser,
-            changeEmail, changePassword, sendEmail, remove, signOut;
+            changeEmail, changePassword, sendEmail, remove, signOut, btnAddHost;
 
     private EditText oldEmail, newEmail, password, newPassword;
     private ProgressBar progressBar;
@@ -73,6 +74,7 @@ public class ProfileFragment extends Fragment {
         btnChangePassword = (Button) rootView.findViewById(R.id.change_password_button);
         btnSendResetEmail = (Button) rootView.findViewById(R.id.sending_pass_reset_button);
         btnRemoveUser = (Button) rootView.findViewById(R.id.remove_user_button);
+        btnAddHost = rootView.findViewById(R.id.new_host_button);
         changeEmail = (Button) rootView.findViewById(R.id.changeEmail);
         changePassword = (Button) rootView.findViewById(R.id.changePass);
         sendEmail = (Button) rootView.findViewById(R.id.send);
@@ -98,6 +100,13 @@ public class ProfileFragment extends Fragment {
         if (progressBar != null) {
             progressBar.setVisibility(View.GONE);
         }
+
+        btnAddHost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getContext(), AddHostActivity.class));
+            }
+        });
 
         btnChangeEmail.setOnClickListener(new View.OnClickListener() {
             @Override
